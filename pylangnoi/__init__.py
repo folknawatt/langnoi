@@ -1,1 +1,1 @@
-from langnoi.base import Langnoi
+from pylangnoi.base import Langnoi
