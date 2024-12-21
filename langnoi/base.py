@@ -4,7 +4,7 @@ from langchain_openai import ChatOpenAI
 from langchain_community.utilities import SQLDatabase
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers.openai_tools import PydanticToolsParser
-from classmodel import State, Table, QueryOutput
+from langnoi.classmodel import State, Table, QueryOutput
 
 
 class Langnoi:
