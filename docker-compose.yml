@@ -1,0 +1,65 @@
+services:
+  mydb:
+    image: mysql:latest
+    container_name: mydb
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PASSWORD}
+      MYSQL_USER: ${USERNAME}
+      MYSQL_PASSWORD: ${PASSWORD}
+      MYSQL_DATABASE: Mock_CP_Data
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - my_network
+
+  dockerdb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dockerdb:1.0
+    ports:
+      - "8127:8127"
+    environment:
+      - MYSQLURI=${MYSQLURI}
+      - CHAT_API_KEY=${CHAT_API_KEY}
+    depends_on:
+      - mydb
+    networks:
+      - my_network
+
+  python:
+    image: python:3.11
+    container_name: python_insertdb
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+    command: sh -c "python -m pip install --upgrade pip && pip install -r requirements.txt && python insertNation.py"
+    depends_on:
+      - mydb
+    networks:
+      - my_network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mydb # ระบุ host ที่จะให้ phpmyadmin ไปจัดการ ซึ่งสามารถใส่เป็นชื่อ container name (db) ได้เลย
+      PMA_PORT: 3306 # ระบุ port ของ Database
+      PMA_USER: ${USERNAME} # ระบุ user ของ Database
+      PMA_PASSWORD: ${PASSWORD} # ระบุ password ของ Database
+    ports:
+      - "9090:80"
+    depends_on:
+      - mydb
+    networks:
+      - my_network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  my_network:
+    driver: bridge

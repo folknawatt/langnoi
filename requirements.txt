@@ -2,5 +2,9 @@ langchain-community
 langchainhub
 langgraph
 mysql-connector-python
-mysql
 langchain_openai
+langchain-groq
+openpyxl
+python-dotenv
+pymysql
+cryptography
