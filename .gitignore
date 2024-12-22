@@ -8,7 +8,10 @@ __pycache__/
 *$py.class
 
 testing.txt
-
+scriptdb
+docker-compose.yml
+Dockerfile
+insertNation.py
 # C extensions
 *.so
 
