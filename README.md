@@ -63,8 +63,8 @@ prompt_config = {
 3. model คือ ชื่อโมเดล
 4. config  คือ prompt config 
 
-โดยภายใน class ของ Langnoi จะมี medthod ชื่อ 
-
+โดยภายใน class ของ Langnoi จะมี medthod ชื่อ query_question 
+มี parameter state ไว้รับ question ของผู้ใช้
 ```python
 system_prompt = Langnoi(
     db_uri= "<Database URI>", 
@@ -73,7 +73,7 @@ system_prompt = Langnoi(
     config= "<prompt_config>"
     )
 
-result_table, sql_query = system_prompt.chain_table(
+result_table, sql_query = system_prompt.query_question(
     {"question": "<The question you would like to ask about data in your database>"}
 )
 print(result_table, sql_query)
