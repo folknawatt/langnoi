@@ -64,4 +64,5 @@ class Langnoi:
 
         structured_llm = self.llm.with_structured_output(schema=QueryOutput)
         result = structured_llm.invoke(query_prompt)
-        return table_answer, {"query": result["query"]}
+        query_result = result["query"].replace("`", '"')
+        return table_answer, {"query": query_result}

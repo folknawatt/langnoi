@@ -12,6 +12,9 @@ scriptdb
 docker-compose.yml
 Dockerfile
 insertNation.py
+Langnoi 0.1.4.ipynb
+Mock_CP_Data.xlsx
+
 # C extensions
 *.so
 
