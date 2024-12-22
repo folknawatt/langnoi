@@ -60,7 +60,7 @@ prompt_config = {
 กำหนด instance ของ class Langnoi โดยจะมี parameters 4 อย่าง
 1. db_uri คือ ลิงก์ uri ของ Database ที่เราจะใช้
 2. api_key คือ api key ของโมเดลที่จะใช้
-3. model คือ ชื่อโมเดล
+3. model คือ ชื่อโมเดล โดยมีให้ใช้ 2 ตัว คือ gpt-4o-mini และ llama-3.2-90b-vision-preview โดย llama จะเป็นการใช้ API key จาก groq 
 4. config  คือ prompt config 
 
 โดยภายใน class ของ Langnoi จะมี medthod ชื่อ query_question 
