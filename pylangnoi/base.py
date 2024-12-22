@@ -22,7 +22,7 @@ class Langnoi:
         else:
             self.llm = ChatGroq(model="llama-3.2-90b-vision-preview",api_key=self.api_key)
 
-    def chain_table(self, state: State):
+    def query_question(self, state: State):
         """Generate SQL query to fetch information."""
         llm_with_tools = self.llm.bind_tools([Table])
         output_parser = PydanticToolsParser(tools=[Table])
