@@ -8,3 +8,5 @@ openpyxl
 python-dotenv
 pymysql
 cryptography
+oauth2client
+gspread
