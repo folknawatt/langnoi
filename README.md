@@ -128,4 +128,4 @@ tables, query = instance_langnoi.query_question({"question": "show all data Sale
 ```
 
 ### แหล่งอ้างอิง
-สามารถดูวิธีการตั้งค่าและใช้งานได้จากวิดีโอแนะนำ: [YouTube Tutorial](https://www.youtube.com/watch?v=6CPjRJYtOBE)
+สามารถดูวิธีการตั้งค่าและใช้งาน Google Developer Console เพื่อรับ secretKey.json ได้จากวิดีโอแนะนำ: [YouTube Tutorial](https://www.youtube.com/watch?v=6CPjRJYtOBE)
