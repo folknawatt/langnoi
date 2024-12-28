@@ -1,31 +1,31 @@
 table_prompt =   """Return the names of any SQL tables in MySQL that are relevant to the user question.
-        # The tables are:
+        The tables are:
 
-        # "name": "Products"
-        # "description": "The Products table stores information about the products available in inventory, including Product_ID, Product_Name, Quantity, and Price."
+        "name": "Products"
+        "description": "The Products table stores information about the products available in inventory, including Product_ID, Product_Name, Quantity, and Price."
 
-        # "name": "Branches"
-        # "description": "The Branches table stores information about different branches, including Branch_ID and Branch_Name."
+        "name": "Branches"
+        "description": "The Branches table stores information about different branches, including Branch_ID and Branch_Name."
 
-        # "name": "Employees"
-        # "description": "The Employees table stores information about employees, including Employee_ID, Employee_Name, and the Branch_ID where they are assigned."
+        "name": "Employees"
+        "description": "The Employees table stores information about employees, including Employee_ID, Employee_Name, and the Branch_ID where they are assigned."
 
-        # "name": "Sales"
-        # "description": "The Sales table records information about product sales, including Sales_ID, Product_ID (linked to Products.Product_ID), Branch_ID (linked to Branches.Branch_ID), Employee_ID (linked to Employees.Employee_ID), Total_Sales, Sales_By_Branch, Sales_By_Employee, and Total_Sales_Amount."
+        "name": "Sales"
+        "description": "The Sales table records information about product sales, including Sales_ID, Product_ID (linked to Products.Product_ID), Branch_ID (linked to Branches.Branch_ID), Employee_ID (linked to Employees.Employee_ID), Total_Sales, Sales_By_Branch, Sales_By_Employee, and Total_Sales_Amount."
 
-        # "name": "Profits"
-        # "description": "The Profits table contains information about profits made from product sales, including Product_ID (linked to Products.Product_ID), Branch_ID (linked to Branches.Branch_ID), Employee_ID (linked to Employees.Employee_ID), Total_Profit, Profit_By_Branch, and Profit_By_Employee."
+        "name": "Profits"
+        "description": "The Profits table contains information about profits made from product sales, including Product_ID (linked to Products.Product_ID), Branch_ID (linked to Branches.Branch_ID), Employee_ID (linked to Employees.Employee_ID), Total_Profit, Profit_By_Branch, and Profit_By_Employee."
 
-        # Column Relationships:
-        # 1. Sales.Product_ID < Products.Product_ID
-        # 2. Sales.Branch_ID < Branches.Branch_ID
-        # 3. Sales.Employee_ID < Employees.Employee_ID
-        # 4. Profits.Product_ID < Products.Product_ID
-        # 5. Profits.Branch_ID < Branches.Branch_ID
-        # 6. Profits.Employee_ID < Employees.Employee_ID
-        # 7. Employees.Branch_ID < Branches.Branch_ID
+        Column Relationships:
+        1. Sales.Product_ID < Products.Product_ID
+        2. Sales.Branch_ID < Branches.Branch_ID
+        3. Sales.Employee_ID < Employees.Employee_ID
+        4. Profits.Product_ID < Products.Product_ID
+        5. Profits.Branch_ID < Branches.Branch_ID
+        6. Profits.Employee_ID < Employees.Employee_ID
+        7. Employees.Branch_ID < Branches.Branch_ID
 
-        # Remember to include ALL POTENTIALLY RELEVANT tables."""
+        Remember to include ALL POTENTIALLY RELEVANT tables."""
 
 
 query_prompt = """Given an input question, create a syntactically correct {dialect} query to run to help find the answer.
@@ -43,5 +43,5 @@ Question: {input}
 
 For example:
 Input: สาขาไหน และพนักงานคนไหนขายน้ำมันหอย กำไรสูงสุด
-Expected Output:
+Expected Output: "SELECT B.Branch_Name, E.Employee_Name, P.Total_Profit FROM Profits P INNER JOIN Branches B ON P.Branch_ID = B.Branch_ID INNER JOIN Employees E ON P.Employee_ID = E.Employee_ID INNER JOIN Products PR ON P.Product_ID = PR.Product_ID WHERE PR.Product_Name = 'น้ำมันหอย' ORDER BY P.Total_Profit DESC"
 """
