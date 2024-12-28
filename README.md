@@ -6,6 +6,7 @@ pip install git+https://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@github.com/folk
 
 # ตัวอย่าง prompt config
 กำหนด table_prompt, query_prompt ซึ่งหากไม่กำหนดจะใช้ default prompt ดังตัวอย่าง
+ในส่วนของ description ของแต่ละ table หากไม่มีให้ใช้เป็น None
 ```python
 prompt_config = {
     "table_prompt": """Return the names of any SQL tables in MySQL that are relevant to the user question.
@@ -66,6 +67,8 @@ prompt_config = {
 โดยภายใน class ของ Langnoi จะมี medthod ชื่อ query_question 
 มี parameter state ไว้รับ question ของผู้ใช้
 ```python
+from pylangnoi.base import Langnoi
+
 system_prompt = Langnoi(
     db_uri= "<Database URI>", 
     api_key= "<API KEY>", 
@@ -78,3 +81,51 @@ result_table, sql_query = system_prompt.query_question(
 )
 print(result_table, sql_query)
 ```
+
+
+# การดึง Prompt จาก Google Sheet
+
+สคริปต์นี้ช่วยให้สามารถดึงข้อมูล Prompt จาก Google Sheet โดยใช้ฟังก์ชัน `get_worksheet` ซึ่งอาศัยการทำงานของไลบรารี `gspread`
+
+## รายละเอียดฟังก์ชัน
+
+### `get_worksheet`
+
+ฟังก์ชัน `get_worksheet` ใช้สำหรับดึงข้อมูลจาก Google Sheet ที่ระบุ
+
+### พารามิเตอร์
+- **`spreadsheet_name`**: ชื่อของ Google Spreadsheet ที่ต้องการเข้าถึง
+- **`key_file`**: ไฟล์ `secretKey.json` ที่ได้จาก Google Developer Console
+- **`sheet_name`**: ชื่อของ Sheet ภายใน Spreadsheet ที่ต้องการดึงข้อมูล
+
+### ตัวอย่าง
+
+```python
+from pylangnoi.base import Langnoi
+from pylangnoi.get_prompt_worksheet import get_worksheet
+
+spreadsheet_name = "Botnoi Langchain" #ชื่อของ spreadsheet ที่จะใช้
+sheet_name = "Prompt_warehouse" #ชื่อของ sheet ที่เลือก
+api_key = "secretKey.json" #secretKey จาก Google Developer Console
+
+sheet = sheet = get_worksheet(
+    spreadsheet_name=spreadsheet_name, key_file=api_key, sheet_name=sheet_name
+)
+system_prompt = sheet.cell(2, 4).value  # (row, column) เลือก prompt ใน sheet ที่ row และ column อะไร
+query_prompt = sheet.cell(3, 4).value  
+
+instance_langnoi = Langnoi(
+    api_key="<API KEY>",
+    model="<Model name>",
+    db_uri="<Database URI>",
+    config={
+        "table_prompt": system_prompt,
+        "query_prompt": query_prompt,
+    },
+)
+
+tables, query = instance_langnoi.query_question({"question": "show all data Sales table"})
+```
+
+### แหล่งอ้างอิง
+สามารถดูวิธีการตั้งค่าและใช้งานได้จากวิดีโอแนะนำ: [YouTube Tutorial](https://www.youtube.com/watch?v=6CPjRJYtOBE)

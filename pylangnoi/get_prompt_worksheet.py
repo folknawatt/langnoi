@@ -50,10 +50,3 @@ def get_worksheet(spreadsheet_name: str, key_file: str, sheet_name: str = None):
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
-if __name__ == "__main__":
-    spreadsheet_name = "Botnoi Langchain"
-    sheet_name = "Prompt_warehouse"
-    api_key = "secretKey.json"
-
-    sheet = get_worksheet(spreadsheet_name, sheet_name, api_key)
-    sheet
