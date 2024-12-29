@@ -16,7 +16,8 @@ class Langnoi:
     - `db_uri`: A string representing the URI of the database.
     - `api_key`: A string representing the API Key for the Language Model.
     - `model`: A string representing the name of the language model in use.
-    - `table_prompt` and `query_prompt`: Special values from the configuration defined for specific problems and questions.
+    - `table_prompt` : A prompt used to indicate the tables within the database.for finding a relation with question input from the user
+    - `query_prompt` : A prompt used to help generate SQL language.
     """
     def __init__(self, db_uri: str, api_key: str, model: str, **config: dict):
         self.db_uri = db_uri
@@ -56,7 +57,7 @@ class Langnoi:
 
             except Exception as e:
                 raise RuntimeError("Failed to fetch usable table names.") from e
-        
+
         prompt_table = ChatPromptTemplate.from_messages(
             [
                 ("system", self.table_prompt),
