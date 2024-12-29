@@ -27,9 +27,9 @@ class Langnoi:
 
         # เชื่อม model
         if self.model == "gpt-4o-mini":
-            self.llm = ChatOpenAI(model="gpt-4o-mini",api_key=self.api_key)
+            self.llm = ChatOpenAI(model="gpt-4o-mini", api_key=self.api_key)
         else:
-            self.llm = ChatGroq(model="llama-3.2-90b-vision-preview",api_key=self.api_key)
+            self.llm = ChatGroq(model=self.model, api_key=self.api_key)
 
     def query_question(self, state: State):
         """Generate SQL query to fetch information."""
