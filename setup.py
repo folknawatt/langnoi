@@ -6,7 +6,7 @@ setuptools.setup(
     author_email="devteam@langnoi.com",
     description="Langnoi Python Pacakge",
     license="MIT License",
-    version="0.1.7",
+    version="0.1.8",
     packages=setuptools.find_packages(),
     install_requires=[
         "langchain-community",

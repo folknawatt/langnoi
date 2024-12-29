@@ -5,22 +5,31 @@ from langchain_community.utilities import SQLDatabase
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers.openai_tools import PydanticToolsParser
 from pylangnoi.classmodel import State, Table, QueryOutput
-from pylangnoi.baseprompt import table_prompt, query_prompt
+from pylangnoi.baseprompt import query_prompt
 
 class Langnoi:
+    """
+    Langnoi is a class designed to connect a Language Model with the capability to retrieve data from a database.
 
+    **Attributes:**
+
+    - `db_uri`: A string representing the URI of the database.
+    - `api_key`: A string representing the API Key for the Language Model.
+    - `model`: A string representing the name of the language model in use.
+    - `table_prompt` and `query_prompt`: Special values from the configuration defined for specific problems and questions.
+    """
     def __init__(self, db_uri: str, api_key: str, model: str, **config: dict):
         self.db_uri = db_uri
         self.api_key = api_key
         self.model = model
-        self.table_prompt = config["table_prompt"] if "table_prompt" in config.keys() else table_prompt
-        self.query_prompt = config["query_prompt"] if "table_prompt" in config.keys() else query_prompt
+        self.table_prompt = config.get("table_prompt", "")
+        self.query_prompt = config.get("query_prompt", query_prompt)
 
         # เชื่อม model
         if self.model == "gpt-4o-mini":
-            self.llm = ChatOpenAI(model="gpt-4o-mini",api_key=self.api_key)
+            self.llm = ChatOpenAI(model="gpt-4o-mini", api_key=self.api_key)
         else:
-            self.llm = ChatGroq(model="llama-3.2-90b-vision-preview",api_key=self.api_key)
+            self.llm = ChatGroq(model=self.model, api_key=self.api_key)
 
     def query_question(self, state: State):
         """Generate SQL query to fetch information."""
@@ -34,6 +43,20 @@ class Langnoi:
         top_k = 10
         input = state["question"]
 
+        # Defualt table_prompt
+        if self.table_prompt == "" :
+            try:
+                table_names = "\n".join(db.get_usable_table_names())
+                self.table_prompt = f"""Return the names of ALL the SQL tables that MIGHT be relevant to the user question.\n
+                    The tables are:\n
+
+                    {table_names}
+
+                    Remember to include ALL POTENTIALLY RELEVANT tables, even if you're not sure that they're needed."""
+
+            except Exception as e:
+                raise RuntimeError("Failed to fetch usable table names.") from e
+        
         prompt_table = ChatPromptTemplate.from_messages(
             [
                 ("system", self.table_prompt),
