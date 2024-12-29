@@ -43,10 +43,9 @@ class Langnoi:
         top_k = 10
         input = state["question"]
 
-        # Defualt table_prompt #################################################################################
+        # Defualt table_prompt
         if self.table_prompt == "" :
             try:
-                # Fetch table names and construct the default table prompt
                 table_names = "\n".join(db.get_usable_table_names())
                 self.table_prompt = f"""Return the names of ALL the SQL tables that MIGHT be relevant to the user question.\n
                     The tables are:\n
@@ -56,9 +55,7 @@ class Langnoi:
                     Remember to include ALL POTENTIALLY RELEVANT tables, even if you're not sure that they're needed."""
 
             except Exception as e:
-                # Handle potential errors in fetching table names
                 raise RuntimeError("Failed to fetch usable table names.") from e
-        ########################################################################################################
         
         prompt_table = ChatPromptTemplate.from_messages(
             [
