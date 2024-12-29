@@ -5,7 +5,7 @@ from langchain_community.utilities import SQLDatabase
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers.openai_tools import PydanticToolsParser
 from pylangnoi.classmodel import State, Table, QueryOutput
-from pylangnoi.baseprompt import table_prompt, query_prompt
+from pylangnoi.baseprompt import query_prompt
 
 class Langnoi:
     """
@@ -22,8 +22,8 @@ class Langnoi:
         self.db_uri = db_uri
         self.api_key = api_key
         self.model = model
-        self.table_prompt = config.get("table_prompt")
-        self.query_prompt = config["query_prompt"] if "query_prompt" in config.keys() else query_prompt
+        self.table_prompt = config.get("table_prompt", "")
+        self.query_prompt = config.get("query_prompt", query_prompt)
 
         # เชื่อม model
         if self.model == "gpt-4o-mini":
@@ -44,7 +44,7 @@ class Langnoi:
         input = state["question"]
 
         # # Defualt table_prompt #################################################################################
-        # if self.table_prompt :
+        # if self.table_prompt == "" :
         #     try:
         #         # Fetch table names and construct the default table prompt
         #         table_names = "\n".join(db.get_usable_table_names())
