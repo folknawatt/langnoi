@@ -22,7 +22,7 @@ class Langnoi:
         self.db_uri = db_uri
         self.api_key = api_key
         self.model = model
-        self.table_prompt = config["table_prompt"] if "table_prompt" in config.keys() else table_prompt
+        self.table_prompt = config.get("table_prompt", table_prompt)
         self.query_prompt = config["query_prompt"] if "query_prompt" in config.keys() else query_prompt
 
         # เชื่อม model
@@ -50,9 +50,9 @@ class Langnoi:
         #         table_names = "\n".join(db.get_usable_table_names())
         #         self.table_prompt = f"""Return the names of ALL the SQL tables that MIGHT be relevant to the user question.\n
         #             The tables are:\n
-                    
+
         #             {table_names}
-                    
+
         #             Remember to include ALL POTENTIALLY RELEVANT tables, even if you're not sure that they're needed."""
 
         #     except Exception as e:
