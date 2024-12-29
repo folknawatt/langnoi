@@ -42,6 +42,9 @@ Only use the following tables:{table_info}
 Question: {input}
 
 For example:
-Input: สาขาไหน และพนักงานคนไหนขายน้ำมันหอย กำไรสูงสุด
+Input question: สาขาไหน และพนักงานคนไหนขายน้ำมันหอย กำไรสูงสุด
 Expected Output: "SELECT B.Branch_Name, E.Employee_Name, P.Total_Profit FROM Profits P INNER JOIN Branches B ON P.Branch_ID = B.Branch_ID INNER JOIN Employees E ON P.Employee_ID = E.Employee_ID INNER JOIN Products PR ON P.Product_ID = PR.Product_ID WHERE PR.Product_Name = 'น้ำมันหอย' ORDER BY P.Total_Profit DESC"
+
+Input question: สาขาไหนกำไรสูงสุด
+Expected Output: "SELECT B.Branch_Name, MAX(P.Total_Profit) AS Max_Profit FROM Profits P INNER JOIN Branches B ON P.Branch_ID = B.Branch_ID GROUP BY B.Branch_Name ORDER BY Max_Profit DESC;"
 """
