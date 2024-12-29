@@ -124,11 +124,16 @@ instance_langnoi = Langnoi(
     api_key="<API KEY>",
     model="<Model name>",
     db_uri="<Database URI>",
-    table_prompt=table_prompt, 
-    query_prompt=query_prompt
+    table_prompt=table_prompt, #ถ้าไม่ใส่ table_prompt จะใช้ default prompt 
+    query_prompt=query_prompt  #ถ้าไม่ใส่ query_prompt จะใช้ default prompt
 )
 
 result_table, sql_query = instance_langnoi.query_question({"question": "show all data Sales table"})
+```
+
+### สามารถทดสอบผลลัพธ์ของ SQL ที่ได้โดย
+```python
+db.run(sql_query["query"])
 ```
 
 ### แหล่งอ้างอิง
