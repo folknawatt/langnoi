@@ -22,7 +22,7 @@ class Langnoi:
         self.db_uri = db_uri
         self.api_key = api_key
         self.model = model
-        self.table_prompt = config['table_prompt'] if 'table_prompt' in config.keys() else ""
+        self.table_prompt = config.get("table_prompt", "")
         self.query_prompt = config["query_prompt"] if "query_prompt" in config.keys() else query_prompt
 
         # เชื่อม model
@@ -43,18 +43,22 @@ class Langnoi:
         top_k = 10
         input = state["question"]
 
-        # Defualt table_prompt
-        if self.table_prompt == "":
-            table_names = "\n".join(db.get_usable_table_names())
-            self.table_prompt = f"""Return the names of ALL the SQL tables that MIGHT be relevant to the user question. \n
-            The tables are:
+        # Defualt table_prompt #################################################################################
+        if not self.table_prompt:
+            try:
+                # Fetch table names and construct the default table prompt
+                table_names = "\n".join(db.get_usable_table_names())
+                self.table_prompt = f"""Return the names of ALL the SQL tables that MIGHT be relevant to the user question.\n
+                    The tables are:\n
+                    
+                    {table_names}
+                    
+                    Remember to include ALL POTENTIALLY RELEVANT tables, even if you're not sure that they're needed."""
 
-            {table_names}
-
-            Remember to include ALL POTENTIALLY RELEVANT tables, even if you're not sure that they're needed."""
-        else:
-            pass
-
+            except Exception as e:
+                # Handle potential errors in fetching table names
+                raise RuntimeError("Failed to fetch usable table names.") from e
+        ########################################################################################################
         prompt_table = ChatPromptTemplate.from_messages(
             [
                 ("system", self.table_prompt),
