@@ -5,11 +5,10 @@ pip install git+https://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@github.com/folk
 ```
 
 # ตัวอย่าง prompt config
-กำหนด table_prompt, query_prompt ซึ่งหากไม่กำหนดจะใช้ default prompt ดังตัวอย่าง
+กำหนด table_prompt, query_prompt ซึ่งหากไม่กำหนดจะใช้ default prompt
 ในส่วนของ description ของแต่ละ table หากไม่มีให้ใช้เป็น None
 ```python
-prompt_config = {
-    "table_prompt": """Return the names of any SQL tables in MySQL that are relevant to the user question.
+table_prompt =   """Return the names of any SQL tables in MySQL that are relevant to the user question.
         The tables are:
 
         "name": "Products"
@@ -36,25 +35,30 @@ prompt_config = {
         6. Profits.Employee_ID < Employees.Employee_ID
         7. Employees.Branch_ID < Branches.Branch_ID
 
-        Remember to include ALL POTENTIALLY RELEVANT tables.""",
-    "query_prompt" : """Given an input question, create a syntactically correct {dialect} query to run to help find the answer.
-        Unless the user specifies in his question a specific number of examples they wish to obtain, always limit
-        your query to at most {top_k} results. You can order the results by a relevant column to return the most
-        interesting examples in the database.
+        Remember to include ALL POTENTIALLY RELEVANT tables."""
 
-        Never query for all the columns from a specific table, only ask for a the few relevant columns given the question.
 
-        Pay attention to use only the column names that you can see in the schema description. Be careful to not
-        query for columns that do not exist. Also, pay attention to which column is in which table.
+query_prompt = """Given an input question, create a syntactically correct {dialect} query to run to help find the answer.
+Unless the user specifies in his question a specific number of examples they wish to obtain, always limit
+your query to at most {top_k} results. You can order the results by a relevant column to return the most
+interesting examples in the database.
 
-        Only use the following tables:{table_info}
-        Question: {input}
+Never query for all the columns from a specific table, only ask for a the few relevant columns given the question.
 
-        For example:
-        Input: สาขาไหน และพนักงานคนไหนขายน้ำมันหอย กำไรสูงสุด
-        Expected Output:
-        """
-}
+Pay attention to use only the column names that you can see in the schema description. Be careful to not
+query for columns that do not exist. Also, pay attention to which column is in which table.
+
+Only use the following tables:{table_info}
+Question: {input}
+
+For example:
+Input question: สาขาไหน และพนักงานคนไหนขายน้ำมันหอย กำไรสูงสุด
+Expected Output: "SELECT B.Branch_Name, E.Employee_Name, P.Total_Profit FROM Profits P INNER JOIN Branches B ON P.Branch_ID = B.Branch_ID INNER JOIN Employees E ON P.Employee_ID = E.Employee_ID INNER JOIN Products PR ON P.Product_ID = PR.Product_ID WHERE PR.Product_Name = 'น้ำมันหอย' ORDER BY P.Total_Profit DESC"
+
+Input question: สาขาไหนกำไรสูงสุด
+Expected Output: "SELECT B.Branch_Name, MAX(P.Total_Profit) AS Max_Profit FROM Profits P INNER JOIN Branches B ON P.Branch_ID = B.Branch_ID GROUP BY B.Branch_Name ORDER BY Max_Profit DESC;"
+"""
+
 ```
 
 # ตัวอย่าง Run.py
@@ -62,7 +66,8 @@ prompt_config = {
 1. db_uri คือ ลิงก์ uri ของ Database ที่เราจะใช้
 2. api_key คือ api key ของโมเดลที่จะใช้
 3. model คือ ชื่อโมเดล โดยมีให้ใช้ 2 ตัว คือ gpt-4o-mini และ llama-3.2-90b-vision-preview โดย llama จะเป็นการใช้ API key จาก groq 
-4. config  คือ prompt config 
+4. table_prompt คือ prompt ที่ใช้ในการบ่งบอกตารางภายใน database 
+5. query_prompt คือ prompt ที่ใช้ในการช่วย generate ภาษา SQL
 
 โดยภายใน class ของ Langnoi จะมี medthod ชื่อ query_question 
 มี parameter state ไว้รับ question ของผู้ใช้
@@ -73,7 +78,8 @@ system_prompt = Langnoi(
     db_uri= "<Database URI>", 
     api_key= "<API KEY>", 
     model= "<Model name>",
-    config= "<prompt_config>"
+    table_prompt=table_prompt, #ถ้าไม่ใส่ table_prompt จะใช้ default prompt 
+    query_prompt=query_prompt  #ถ้าไม่ใส่ query_prompt จะใช้ default prompt
     )
 
 result_table, sql_query = system_prompt.query_question(
@@ -108,23 +114,26 @@ spreadsheet_name = "Botnoi Langchain" #ชื่อของ spreadsheet ที�
 sheet_name = "Prompt_warehouse" #ชื่อของ sheet ที่เลือก
 api_key = "secretKey.json" #secretKey จาก Google Developer Console
 
-sheet = sheet = get_worksheet(
+sheet = get_worksheet(
     spreadsheet_name=spreadsheet_name, key_file=api_key, sheet_name=sheet_name
 )
-system_prompt = sheet.cell(2, 4).value  # (row, column) เลือก prompt ใน sheet ที่ row และ column อะไร
+table_prompt = sheet.cell(2, 4).value  # (row, column) เลือก prompt ใน sheet ที่ row และ column อะไร
 query_prompt = sheet.cell(3, 4).value  
 
 instance_langnoi = Langnoi(
     api_key="<API KEY>",
     model="<Model name>",
     db_uri="<Database URI>",
-    config={
-        "table_prompt": system_prompt,
-        "query_prompt": query_prompt,
-    },
-)
+    table_prompt=table_prompt, #ถ้าไม่ใส่ table_prompt จะใช้ default prompt 
+    query_prompt=query_prompt  #ถ้าไม่ใส่ query_prompt จะใช้ default prompt
+    )
 
-tables, query = instance_langnoi.query_question({"question": "show all data Sales table"})
+result_table, sql_query = instance_langnoi.query_question({"question": "show all data Sales table"})
+```
+
+### สามารถทดสอบผลลัพธ์ของ SQL ที่ได้โดย
+```python
+db.run(sql_query["query"])
 ```
 
 ### แหล่งอ้างอิง
