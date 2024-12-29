@@ -78,8 +78,8 @@ system_prompt = Langnoi(
     db_uri= "<Database URI>", 
     api_key= "<API KEY>", 
     model= "<Model name>",
-    table_prompt=table_prompt, 
-    query_prompt=query_prompt
+    table_prompt=table_prompt, #ถ้าไม่ใส่ table_prompt จะใช้ default prompt 
+    query_prompt=query_prompt  #ถ้าไม่ใส่ query_prompt จะใช้ default prompt
     )
 
 result_table, sql_query = system_prompt.query_question(
@@ -126,7 +126,7 @@ instance_langnoi = Langnoi(
     db_uri="<Database URI>",
     table_prompt=table_prompt, #ถ้าไม่ใส่ table_prompt จะใช้ default prompt 
     query_prompt=query_prompt  #ถ้าไม่ใส่ query_prompt จะใช้ default prompt
-)
+    )
 
 result_table, sql_query = instance_langnoi.query_question({"question": "show all data Sales table"})
 ```
