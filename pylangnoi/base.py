@@ -22,7 +22,7 @@ class Langnoi:
         self.db_uri = db_uri
         self.api_key = api_key
         self.model = model
-        self.table_prompt = f"""{config.get("table_prompt")}"""
+        self.table_prompt = config.get("table_prompt")
         self.query_prompt = config["query_prompt"] if "query_prompt" in config.keys() else query_prompt
 
         # เชื่อม model
