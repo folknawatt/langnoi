@@ -37,9 +37,8 @@ class Langnoi:
         llm_with_tools = self.llm.bind_tools([Table])
         output_parser = PydanticToolsParser(tools=[Table])
 
-        # Database ที่ใช้
+        # Database connection
         db = SQLDatabase.from_uri(self.db_uri)
-
         dialect = db.dialect
         top_k = 10
         input = state["question"]
@@ -75,7 +74,6 @@ class Langnoi:
 
         table_chain = category_chain | get_tables
         table_answer = table_chain.invoke(input)
-
         table_info = db.get_table_info(table_answer)
 
         query_prompt = self.query_prompt.format(
